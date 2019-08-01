@@ -1,14 +1,16 @@
 package com.dev.luqman;
 
+import static org.junit.Assert.assertThat;
+
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import com.dev.luqman.tree.BinaryTreeImpl;
 import com.dev.luqman.tree.Tree;
-import com.dev.luqman.tree.TreeNode;
 import com.dev.luqman.tree.exceptions.EmptyTreeException;
 
 
@@ -87,25 +89,50 @@ public class BinaryTreeTest {
 	
 	@Test
 	public void testPreOrder() throws Exception {
-		Set<TreeNode> set = tree.printPreOrder();
+		Set<Integer> set = tree.printPreOrder();
 		Assert.assertNotNull(set);
 	}
 	
 	@Test
 	public void testLca() {
-		TreeNode<Integer> lcaNode = tree.leastCommonAncestor(Integer.valueOf(8), Integer.valueOf(5));
-		Assert.assertEquals(Integer.valueOf(2), lcaNode.getData());
+		Integer lcaElement = tree.leastCommonAncestor(Integer.valueOf(8), Integer.valueOf(5));
+		Assert.assertEquals(Integer.valueOf(2), lcaElement);
 	}
 	
 	@Test
 	public void testLcaNotFoundOneNode() {
-		TreeNode<Integer> lcaNode = tree.leastCommonAncestor(Integer.valueOf(199), Integer.valueOf(5));
-		Assert.assertEquals(Integer.valueOf(5), lcaNode.getData());
+		Integer lcaElement = tree.leastCommonAncestor(Integer.valueOf(199), Integer.valueOf(5));
+		Assert.assertEquals(Integer.valueOf(5), lcaElement);
 	}
 	
 	@Test
 	public void testLcaChild() {
-		TreeNode<Integer> lcaNode = tree.leastCommonAncestor(Integer.valueOf(4), Integer.valueOf(8));
-		Assert.assertEquals(Integer.valueOf(4), lcaNode.getData());
+		Integer lcaElement = tree.leastCommonAncestor(Integer.valueOf(4), Integer.valueOf(8));
+		Assert.assertEquals(Integer.valueOf(4), lcaElement);
+	}
+	
+	@Test
+	public void testLeftView() {
+		Set<Integer> leftView = tree.leftView();	
+		assertThat(leftView, IsIterableContainingInOrder.contains(1, 2, 4, 8));
+	}
+	
+	@Test
+	public void testLeafView() {
+		Set<Integer> leafView = tree.leafView();	
+		assertThat(leafView, IsIterableContainingInOrder.contains(8, 9, 10, 6, 7));
+	}
+	
+
+	@Test
+	public void testRightView() {
+		Set<Integer> rightView = tree.rightView();	
+		assertThat(rightView, IsIterableContainingInOrder.contains(1, 3, 7));
+	}
+	
+	@Test
+	public void testBoundaryTraversal() {
+		Set<Integer> boundaryNodes = tree.boundaryTraversal();
+		assertThat(boundaryNodes, IsIterableContainingInOrder.contains(1, 2, 4, 8, 9, 10, 6, 7, 3));
 	}
 }

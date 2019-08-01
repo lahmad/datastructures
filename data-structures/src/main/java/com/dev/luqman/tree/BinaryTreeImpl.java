@@ -101,13 +101,13 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 	}
 
 	@Override
-	public Set<TreeNode> printInOrder() throws EmptyTreeException {
+	public Set<E> printInOrder() throws EmptyTreeException {
 		
 		if (this.size == 0) {
 			throw new EmptyTreeException("The Binary Tree is empty");
 		}
 		
-		Set<TreeNode> nodes = new LinkedHashSet<>();
+		Set<E> nodes = new LinkedHashSet<>();
 		
 		Stack<TreeNode<E>> stack = new Stack<>();
 		stack.push(this.root);
@@ -121,7 +121,7 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 			}
 			
 			TreeNode<E> treeNode = stack.pop();
-			nodes.add(treeNode);			
+			nodes.add(treeNode.getData());			
 			current = current.getRight();
 		}
 		
@@ -129,20 +129,20 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 	}
 
 	@Override
-	public Set<TreeNode> printPreOrder() throws EmptyTreeException {
+	public Set<E> printPreOrder() throws EmptyTreeException {
 		
 		if (this.root == null) {
 			throw new EmptyTreeException("Binary Tree is empty");
 		}
 		
-		Set<TreeNode> nodes = new LinkedHashSet<>();
+		Set<E> nodes = new LinkedHashSet<>();
 
 		Stack<TreeNode<E>> stack = new Stack<>();
 		stack.push(this.root);
 		
 		while (!stack.isEmpty()) {
 			TreeNode<E> node = stack.pop();
-			nodes.add(node);
+			nodes.add(node.getData());
 			
 			if (node.getRight() != null) {
 				stack.push(node.getRight());
@@ -156,13 +156,13 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 	}
 
 	@Override
-	public Set<TreeNode> printPostOrder() throws EmptyTreeException {
+	public Set<E> printPostOrder() throws EmptyTreeException {
 		
 		if (this.root == null) {
 			throw new EmptyTreeException("Binary Tree is empty");
 		}
 		
-		Set<TreeNode> nodes = new LinkedHashSet<>();
+		Set<E> nodes = new LinkedHashSet<>();
 
 		postOrderRecursive(this.root, nodes);
 		
@@ -293,9 +293,42 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 	
 
 	@Override
-	public TreeNode<E> leastCommonAncestor(E p, E q) {
-		return lcaRecursive(this.root, q, p);
+	public E leastCommonAncestor(E p, E q) {
+		TreeNode<E> node = lcaRecursive(this.root, q, p);
+		return node.getData();
 	}
+	
+
+	@Override
+	public Set<E> boundaryTraversal() {
+		
+		Set<E> nodes = new LinkedHashSet<>(leftView());
+		nodes.addAll(leafView());
+		nodes.addAll(rightView());		
+		return nodes;
+	}
+
+	@Override
+	public Set<E> leftView() {
+		Set<E> set = new LinkedHashSet<>();
+		leftView(this.root, set);
+		return set;
+	}
+
+	@Override
+	public Set<E> rightView() {		
+		Set<E> set = new LinkedHashSet<>();
+		rightView(this.root, set);
+		return set;
+	}
+
+	@Override
+	public Set<E> leafView() {
+		Set<E> set = new LinkedHashSet<>();
+		leafView(this.root, set);
+		return set;
+	}
+	
 
 	private boolean contains(TreeNode<E> node) {
 		
@@ -310,11 +343,11 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 		return contains(node.getLeft()) || contains(node.getRight());
 	}
 	
-	private void postOrderRecursive(TreeNode<E> node, Set<TreeNode> nodes) {
+	private void postOrderRecursive(TreeNode<E> node, Set<E> nodes) {
 		if (node != null) {
 			postOrderRecursive(node.getLeft(), nodes);
 			postOrderRecursive(node.getRight(), nodes);
-			nodes.add(node);
+			nodes.add(node.getData());
 		}
 	}
 	
@@ -335,5 +368,42 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 		}
 		
 		return left != null ? left : right;
+	}
+	
+	private void leftView(TreeNode<E> node, Set<E> nodes) {
+		if (node != null) {
+			nodes.add(node.getData());
+			
+			if (node.getLeft() != null) {
+				leftView(node.getLeft(), nodes);
+			}
+			else if(node.getRight() != null) {
+				leftView(node.getRight(), nodes);
+			}
+		}
+	}
+	
+	private void rightView(TreeNode<E> node, Set<E> nodes) {
+		if (node != null) {
+			
+			nodes.add(node.getData());
+			if (node.getRight() != null) {
+				rightView(node.getRight(), nodes);
+			}
+			else if (node.getLeft() != null) {
+				rightView(node.getLeft(), nodes);
+			}
+		}
+	}
+	
+	private void leafView(TreeNode<E> node, Set<E> nodes) {
+		
+		if (node != null) {
+			if (node.getLeft() == null && node.getRight() == null) {
+				nodes.add(node.getData());
+			}
+			leafView(node.getLeft(), nodes);
+			leafView(node.getRight(), nodes);
+		}
 	}
 }

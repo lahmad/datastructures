@@ -13,11 +13,11 @@ public interface Tree<E> {
 	
 	boolean contains(E element) throws ElementNotFoundException;
 	
-	Set<TreeNode> printInOrder() throws EmptyTreeException;
+	Set<E> printInOrder() throws EmptyTreeException;
 	
-	Set<TreeNode> printPreOrder() throws EmptyTreeException;
+	Set<E> printPreOrder() throws EmptyTreeException;
 	
-	Set<TreeNode> printPostOrder() throws EmptyTreeException;
+	Set<E> printPostOrder() throws EmptyTreeException;
 	
 	boolean dfs(E element) throws  EmptyTreeException;
 	
@@ -27,7 +27,15 @@ public interface Tree<E> {
 	
 	E max() throws EmptyTreeException;
 	
-	TreeNode leastCommonAncestor(E p, E q);
+	E leastCommonAncestor(E p, E q);
+	
+	Set<E> boundaryTraversal();
+	
+	Set<E> leftView();
+	
+	Set<E> rightView();
+	
+	Set<E> leafView();
 	
 	int size();
 }
