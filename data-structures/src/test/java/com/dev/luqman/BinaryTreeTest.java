@@ -90,4 +90,22 @@ public class BinaryTreeTest {
 		Set<TreeNode> set = tree.printPreOrder();
 		Assert.assertNotNull(set);
 	}
+	
+	@Test
+	public void testLca() {
+		TreeNode<Integer> lcaNode = tree.leastCommonAncestor(Integer.valueOf(8), Integer.valueOf(5));
+		Assert.assertEquals(Integer.valueOf(2), lcaNode.getData());
+	}
+	
+	@Test
+	public void testLcaNotFoundOneNode() {
+		TreeNode<Integer> lcaNode = tree.leastCommonAncestor(Integer.valueOf(199), Integer.valueOf(5));
+		Assert.assertEquals(Integer.valueOf(5), lcaNode.getData());
+	}
+	
+	@Test
+	public void testLcaChild() {
+		TreeNode<Integer> lcaNode = tree.leastCommonAncestor(Integer.valueOf(4), Integer.valueOf(8));
+		Assert.assertEquals(Integer.valueOf(4), lcaNode.getData());
+	}
 }

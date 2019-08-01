@@ -27,5 +27,7 @@ public interface Tree<E> {
 	
 	E max() throws EmptyTreeException;
 	
+	TreeNode leastCommonAncestor(E p, E q);
+	
 	int size();
 }

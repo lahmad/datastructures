@@ -291,6 +291,12 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 		return max.getData();
 	}
 	
+
+	@Override
+	public TreeNode<E> leastCommonAncestor(E p, E q) {
+		return lcaRecursive(this.root, q, p);
+	}
+
 	private boolean contains(TreeNode<E> node) {
 		
 		if (node == null) {
@@ -310,5 +316,24 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 			postOrderRecursive(node.getRight(), nodes);
 			nodes.add(node);
 		}
+	}
+	
+	private TreeNode<E> lcaRecursive(TreeNode<E> node, E q, E p) {
+		if (node == null) {
+			return null;
+		}
+		
+		if (node.getData().compareTo(p) == 0 || node.getData().compareTo(q) == 0) {
+			return node;
+		}
+		
+		TreeNode<E> left = lcaRecursive(node.getLeft(), q, p);
+		TreeNode<E> right = lcaRecursive(node.getRight(), q, p);
+		
+		if (left != null && right != null) {
+			return node;
+		}
+		
+		return left != null ? left : right;
 	}
 }
