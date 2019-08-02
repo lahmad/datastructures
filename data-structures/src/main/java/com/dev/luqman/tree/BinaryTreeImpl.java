@@ -329,7 +329,11 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 		return set;
 	}
 	
-
+	@Override
+	public int height() {
+		return height(this.root);
+	}
+	
 	private boolean contains(TreeNode<E> node) {
 		
 		if (node == null) {
@@ -405,5 +409,16 @@ public class BinaryTreeImpl<E extends Comparable<E>> implements Tree<E> {
 			leafView(node.getLeft(), nodes);
 			leafView(node.getRight(), nodes);
 		}
+	}
+	
+	private int height(TreeNode<E> node) {
+		if (node == null) {
+			return -1;
+		}
+		
+		int leftHeight = height(node.getLeft());
+		int righHeight = height(node.getRight());
+		
+		return Math.max(leftHeight, righHeight) + 1;
 	}
 }

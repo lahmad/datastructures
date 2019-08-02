@@ -38,4 +38,6 @@ public interface Tree<E> {
 	Set<E> leafView();
 	
 	int size();
+	
+	int height();
 }
