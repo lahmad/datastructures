@@ -1,7 +1,10 @@
 package com.dev.luqman.tree;
 
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 import com.dev.luqman.tree.exceptions.ElementNotFoundException;
 import com.dev.luqman.tree.exceptions.EmptyTreeException;
@@ -18,14 +21,65 @@ public class BinarySearchTreeImpl<E extends Comparable<E>> implements BinarySear
 	
 	@Override
 	public E ceiling(E element) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		E result = null;
+		TreeNode<E> node = findNode(this.root, element);
+		if (node == null) {
+			result = null;
+		}
+		
+		else if (node.getRight() != null) {
+			TreeNode<E> min = findMinTreeNode(node.getRight());
+			result = min.getData();
+		}
+		else {
+			TreeNode<E> current = this.root;
+			TreeNode<E> previous = null;
+			
+			while (current.getData().compareTo(element) != 0) {
+				if (current.getData().compareTo(element) > 0) {
+					previous = current;
+					current = current.getLeft();
+				} else {
+					current = current.getRight();
+				}
+			}
+			result = previous.getData();
+		}
+		return result;
 	}
 
 	@Override
 	public E floor(E element) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		E result = null;
+		TreeNode<E> node = findNode(this.root, element);
+		
+		if (node == null) {
+			result = null;
+		} 
+		else {
+			if (node.getLeft() != null) {
+				TreeNode<E> max = findMaxTreeNode(node.getLeft());
+				result = max.getData();
+			}
+			else {
+				TreeNode<E> current = this.root;
+				TreeNode<E> previous = null;
+				
+				while (current.getData().compareTo(element) != 0) {
+					if (current.getRight() != null) {
+						previous = current;
+						current = current.getRight();
+					}
+					else {
+						current = current.getLeft();
+					}
+				}
+				result = previous.getData();
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -78,7 +132,22 @@ public class BinarySearchTreeImpl<E extends Comparable<E>> implements BinarySear
 
 	@Override
 	public boolean contains(E element) throws ElementNotFoundException {
-		// TODO Auto-generated method stub
+		if (this.root == null) {
+			return false;
+		} else {
+			TreeNode<E> current = this.root;
+			while (current != null) {
+				if (current.getData().compareTo(element) > 0) {
+					current = current.getLeft();
+				}
+				else if (current.getData().compareTo(element) < 0) {
+					current = current.getRight();
+				}
+				else {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
@@ -91,25 +160,71 @@ public class BinarySearchTreeImpl<E extends Comparable<E>> implements BinarySear
 
 	@Override
 	public Set<E> printPreOrder() throws EmptyTreeException {
-		// TODO Auto-generated method stub
-		return null;
+		Set<E> set = new LinkedHashSet<>();
+		printPreOrderHelper(this.root, set);
+		return set;
 	}
 
 	@Override
 	public Set<E> printPostOrder() throws EmptyTreeException {
-		// TODO Auto-generated method stub
-		return null;
+		Set<E> set = new LinkedHashSet<>();
+		printPostOrderHelper(this.root, set);
+		return set;	
 	}
 
 	@Override
 	public boolean dfs(E element) throws EmptyTreeException {
-		// TODO Auto-generated method stub
+		
+		if (this.root == null) {
+			throw new EmptyTreeException("BinarySearchTree is empty");
+		}
+		
+		Stack<TreeNode<E>> stack = new Stack<>();
+		stack.push(this.root);
+		
+		while (!stack.isEmpty()) {
+			
+			TreeNode<E> node = stack.pop();
+
+			if (node.getData().compareTo(element) > 0) {
+				if (node.getLeft() != null)
+					stack.push(node.getLeft());
+			}
+			else if (node.getData().compareTo(element) < 0) {
+				if (node.getRight() != null)
+				stack.push(node.getRight());
+			}
+			else {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean bfs(E element) throws EmptyTreeException {
-		// TODO Auto-generated method stub
+		
+		if (this.root == null) {
+			throw new EmptyTreeException("BinarySearchTree is empty");
+		}
+		
+		Queue<TreeNode<E>> queue = new LinkedList<>();
+		queue.add(this.root);
+		while (!queue.isEmpty()) {
+			TreeNode<E> node = queue.poll();
+			
+			if (node.getData().compareTo(element) == 0) {
+				return true;
+			}
+			else if (node.getData().compareTo(element) < 0) {
+				if (node.getRight() != null)
+					queue.add(node.getRight());
+			}
+			else {
+				if (node.getLeft() != null)
+					queue.add(node.getLeft());
+			}
+		}
 		return false;
 	}
 
@@ -240,6 +355,19 @@ public class BinarySearchTreeImpl<E extends Comparable<E>> implements BinarySear
 		return current;
 	}
 	
+	private TreeNode<E> findMaxTreeNode(TreeNode<E> node) {
+		
+		if (node == null) {
+			return node;
+		}
+		
+		TreeNode<E> current = node;
+		while(current.getRight() != null) {
+			current = current.getRight();
+		}
+		return current;
+	}
+
 
 	private void printInOrderHelper(TreeNode<E> node, Set<E> nodes) {
 		
@@ -248,5 +376,44 @@ public class BinarySearchTreeImpl<E extends Comparable<E>> implements BinarySear
 			nodes.add(node.getData());
 			printInOrderHelper(node.getRight(), nodes);
 		}
+	}
+	
+	private void printPreOrderHelper(TreeNode<E> node, Set<E> nodes) {
+		if (node != null) {
+			nodes.add(node.getData());
+			printPreOrderHelper(node.getLeft(), nodes);
+			printPreOrderHelper(node.getRight(), nodes);
+		}
+	}
+	
+	private void printPostOrderHelper(TreeNode<E> node, Set<E> nodes) {
+		if (node != null) {
+			printPostOrderHelper(node.getLeft(), nodes);
+			printPostOrderHelper(node.getRight(), nodes);
+			nodes.add(node.getData());
+		}
+	}
+	
+	private TreeNode<E> findNode(TreeNode<E> root, E element) {
+		
+		if (root == null) {
+			return root;
+		}
+		
+		TreeNode<E> current = root;
+		while (current != null) {
+			if (current.getData().compareTo(element) == 0) {
+				break;
+			}
+			
+			else if (current.getData().compareTo(element) < 0) {
+				current = current.getRight();
+			}
+			else {
+				current = current.getLeft();
+			}
+		}
+		
+		return current;
 	}
 }
